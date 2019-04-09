@@ -15,9 +15,9 @@ export function reduceNumber(): IAction {
   }
 }
 
-export function setNumber(): IAction {
+export function setNumber(number: Number): IAction {
   return {
     type: constants.SET_NUMBER,
-    payload: 10
+    payload: number
   }
 }

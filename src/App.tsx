@@ -1,9 +1,11 @@
 import * as React from "react";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
+import { BrowserRouter as Router, Route, Switch, NavLink } from 'react-router-dom';
 import { IStoreState, IGlobalStoreState } from './reducers/types'
-// import { addNumber } from './actions'
 import * as actions from './actions/index';
+import Test from './pages/Test/Index';
+import New from './pages/New/Index'
 
 export interface IHomePageState {
   number: number;
@@ -13,7 +15,7 @@ export interface IHomePageProps {
   global: IGlobalStoreState;
   addNumber: () => void;
   reduceNumber: () => void;
-  setNumber: () => void;
+  setNumber: (number: Number) => void;
 }
 
 class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
@@ -32,13 +34,22 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
 
   public render(){
     const { global } = this.props;
+    const { number } = this.state;
     return (
       <div>
          <div>{name}{ global.amount }</div>
          <button onClick={this.props.addNumber}>add number</button>
          <button onClick={this.props.reduceNumber}>reduce number</button>
-         <button onClick={this.props.setNumber}>set number</button>
+         <button onClick={() => this.props.setNumber(number)}>set number</button>
          <input value={this.state.number} onChange={this.numberOnChange} />
+         <Router>
+           <NavLink exact to="/">TO TEST</NavLink>
+           <NavLink exact to="/new">TO NEW</NavLink>
+           <Switch>
+             <Route path="/" exact component={ Test } />
+             <Route path="/new" exact component={ New } />
+           </Switch>
+         </Router>
       </div>
     )
   }
@@ -56,7 +67,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     addNumber: () => dispatch(actions.addNumber()),
     reduceNumber: () => dispatch(actions.reduceNumber()),
-    setNumber: () => dispatch(actions.setNumber())
+    setNumber: (number: Number) => dispatch(actions.setNumber(number))
   }
 }
 
