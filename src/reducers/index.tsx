@@ -1,19 +1,35 @@
 import { IAction, IGlobalStoreState } from "./types";
-import { ADD_NUMBER, REDUCE_NUMBER, SET_NUMBER } from '../constants';
+import { ADD_NUMBER, REDUCE_NUMBER, SET_NUMBER, GET_TASL } from "../constants";
+import http from '../common/http';
 
 const initState: IGlobalStoreState = {
   amount: 0
 };
 
-export function globalReducers(state = initState, action: IAction): IGlobalStoreState {
+export function globalReducers(
+  state = initState,
+  action: IAction
+): IGlobalStoreState {
   const { type, payload } = action;
   switch (type) {
     case ADD_NUMBER:
-      return {...state, amount: state.amount + 1};
+      return { ...state, amount: state.amount + 1 };
     case REDUCE_NUMBER:
-      return {...state, amount: state.amount - 1};
+      return { ...state, amount: state.amount - 1 };
     case SET_NUMBER:
-      return {...state, amount: payload}
+      const param = {
+        task: payload
+      }
+      http.post('http://127.0.0.1:5000/test', param)
+      .then((response : Object) => {
+        console.log(response)
+      })
+      return { ...state, amount: payload };
+    case GET_TASL:
+      http.get('http://127.0.0.1:5000/test')
+      .then((response : Object) => {
+        console.log(response)
+      })
     default:
       return { ...state };
   }

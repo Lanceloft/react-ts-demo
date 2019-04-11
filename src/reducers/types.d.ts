@@ -6,10 +6,10 @@ export interface IAction {
 }
 
 export interface IGlobalStoreState {
-  amount: number
+  amount: number;
 }
 
 export interface IStoreState {
   global: IGlobalStoreState;
-  name: string,
+  name: string;
 }
