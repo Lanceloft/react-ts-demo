@@ -31,7 +31,7 @@ class TestRoute(Resource):
         client = pymongo.MongoClient(host='localhost', port=27017)
         db = client.test
         collection = db.todos
-        result = collection.insert_one({'task': args['task']})
+        result = collection.insert_one({'task': args['task'], 'id': collection.find().count()})
         res = {
           "status": 0,
         }

@@ -29,7 +29,6 @@ export function getTask () : (dispatch : Dispatch<any>) => void {
   return (dispatch : Dispatch) => {
     http.get('http://127.0.0.1:5000/test')
     .then((data) => {
-      console.log(data.data)
       dispatch({
         type: constants.GET_TASL,
         payload: data.data

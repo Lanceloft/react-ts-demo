@@ -47,6 +47,10 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     const { number } = this.state;
 
     const columns = [{
+      title: 'id',
+      dataIndex: 'id',
+      key: 'id',
+    }, {
       title: '名称',
       dataIndex: 'task',
       key: 'task',
@@ -63,7 +67,10 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
         <Button onClick={() => this.props.setNumber(number)}>set number</Button>
         <Input style={{width: '200px'}} value={this.state.number} onChange={this.numberOnChange} />
         <Button onClick={this.props.getTask}>调用接口</Button>
-        <Table dataSource={global.data} columns={columns} />
+        <Table
+          rowKey="id"
+          dataSource={global.data}
+          columns={columns} />
         <Router>
           <NavLink exact to="/">
             TO TEST
