@@ -16,5 +16,5 @@ export interface IStoreState {
 }
 
 export interface APIAction {
-  type: any;
+  type?: any;
 }
