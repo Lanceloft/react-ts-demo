@@ -3,7 +3,8 @@ import { ADD_NUMBER, REDUCE_NUMBER, SET_NUMBER, GET_TASL } from "../constants";
 import http from '../common/http';
 
 const initState: IGlobalStoreState = {
-  amount: 0
+  amount: 0,
+  data: [],
 };
 
 export function globalReducers(
@@ -26,10 +27,7 @@ export function globalReducers(
       })
       return { ...state, amount: payload };
     case GET_TASL:
-      http.get('http://127.0.0.1:5000/test')
-      .then((response : Object) => {
-        console.log(response)
-      })
+      return { ...state, data: payload};
     default:
       return { ...state };
   }

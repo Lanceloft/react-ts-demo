@@ -6,6 +6,9 @@ const http = {
       axios.get(repo, param)
       .then((response) => {
         console.log(response);
+        if (response.status === 200) {
+          resolve(response.data)
+        }
       })
       .catch((error) => {
         return resolve(error);

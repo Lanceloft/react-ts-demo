@@ -1,7 +1,6 @@
 import * as React from "react";
-import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { Button, Input } from 'antd';
+import { Button, Input, Table } from 'antd';
 import {
   BrowserRouter as Router,
   Route,
@@ -33,6 +32,10 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     };
   }
 
+  componentDidMount() {
+    this.props.getTask()
+  }
+
   public numberOnChange = (e: any) => {
     this.setState({
       number: e.target.value
@@ -42,6 +45,13 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
   public render() {
     const { global } = this.props;
     const { number } = this.state;
+
+    const columns = [{
+      title: '名称',
+      dataIndex: 'task',
+      key: 'task',
+    }];
+
     return (
       <div>
         <div>
@@ -53,6 +63,7 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
         <Button onClick={() => this.props.setNumber(number)}>set number</Button>
         <Input style={{width: '200px'}} value={this.state.number} onChange={this.numberOnChange} />
         <Button onClick={this.props.getTask}>调用接口</Button>
+        <Table dataSource={global.data} columns={columns} />
         <Router>
           <NavLink exact to="/">
             TO TEST
@@ -77,16 +88,8 @@ const mapStateToProps = (state: IStoreState) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    addNumber: () => dispatch(actions.addNumber()),
-    reduceNumber: () => dispatch(actions.reduceNumber()),
-    setNumber: (number: Number) => dispatch(actions.setNumber(number)),
-    getTask: () => dispatch(actions.getTask())
-  };
-};
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  actions
 )(HomeComponent);

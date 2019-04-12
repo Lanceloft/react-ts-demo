@@ -7,9 +7,14 @@ export interface IAction {
 
 export interface IGlobalStoreState {
   amount: number;
+  data: array;
 }
 
 export interface IStoreState {
   global: IGlobalStoreState;
   name: string;
+}
+
+export interface APIAction {
+  type: any;
 }
