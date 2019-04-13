@@ -1,26 +1,19 @@
-import { observable, computed, action } from 'mobx';
+import { observable, action } from 'mobx';
 
-class GlobalStore {
-  @observable showLoading : boolean = false
-  @observable number : number = 0
+export interface IMobxStore {
+  number: number;
+  addNumber(): void;
+  reduceNumber(): void
+}
 
-  @computed get loading() : boolean {
-    return this.showLoading
-  }
+class GlobalStore implements IMobxStore {
+  @observable number = 0
 
-  @action toShowLoding = () : void => {
-    this.showLoading = true
-  }
-
-  @action toHideLoading = () : void  => {
-    this.showLoading = false;
-  }
-
-  @action addNumber = () : void => {
+  @action addNumber = () => {
     this.number = this.number + 1
   }
 
-  @action reduceNumber = () : void => {
+  @action reduceNumber = ()=> {
     this.number = this.number - 1
   }
 }

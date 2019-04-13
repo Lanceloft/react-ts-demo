@@ -9,18 +9,14 @@ import {
 } from "react-router-dom";
 import Test from "./pages/Test/Index";
 import New from "./pages/New/Index";
+import { IMobxStore } from './store/Global'
 
 export interface IHomePageState {
 }
 
 export interface IHomePageProps {
   rootStore ? : {
-    globalStore ? : {
-      showLoading ?: boolean,
-      number ? : number,
-      addNumber ? : any,
-      reduceNumber : any
-    }
+    globalStore ? : IMobxStore
   };
 }
 
