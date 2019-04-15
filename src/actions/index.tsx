@@ -25,8 +25,7 @@ export function setNumber(number : Number) : (dispatch : Dispatch) => void {
     http.post('http://127.0.0.1:5000/test', param)
     .then((data) => {
       if(data.status === 0) {
-        // dispatch(getTask())
-        dispatch(reduceNumber())
+        dispatch<any>(getTask())
       }
     })
   }
