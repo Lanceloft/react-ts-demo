@@ -10,6 +10,7 @@ class GlobalStore implements IMobxStore {
   @observable number = 0
 
   @action addNumber = () => {
+      console.log(22)
     this.number = this.number + 1
   }
 
