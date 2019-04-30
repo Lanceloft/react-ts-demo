@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Button, Input, Table, Modal } from "antd";
+import { Button, Input, Table, Modal, Row, Col } from "antd";
 import {
   BrowserRouter as Router,
   Route,
@@ -21,6 +21,9 @@ export interface Record {
 export interface IHomePageState {
   number: number;
   searchName: string;
+  visible: boolean;
+  editId: number;
+  changeName: string;
 }
 
 export interface IHomePageProps {
@@ -30,6 +33,7 @@ export interface IHomePageProps {
   setNumber: (number: Number) => void;
   getTask: (searchNumber: string) => void;
   deleteItem: (id: number) => void;
+  editItem: (id: number, name: string) => void;
 }
 
 class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
@@ -37,7 +41,10 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     super(props);
     this.state = {
       number: 0,
-      searchName: ""
+      searchName: "",
+      visible: false,
+      editId: 0,
+      changeName: ""
     };
   }
 
@@ -58,22 +65,46 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
   };
 
   public deleteItem = (id: number) => {
-    console.log(id);
     this.props.deleteItem(id);
   };
 
   public showDeleteConfirm = (id: number) => {
-    let that = this;
     confirm({
       title: "Are you sure delete this task?",
       content: "Some descriptions",
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
-      onOk() {
-        that.props.deleteItem(id);
+      onOk: () => {
+        this.props.deleteItem(id);
       },
-      onCancel() {}
+      onCancel: () => {}
+    });
+  };
+
+  public handleOk = () => {
+    this.props.editItem(this.state.editId, this.state.changeName);
+    this.handleCancel();
+  };
+
+  public handleCancel = () => {
+    this.setState({
+      visible: false,
+      changeName: ""
+    });
+  };
+
+  public showEditModal = (id: number, task: string) => {
+    this.setState({
+      visible: true,
+      editId: id,
+      changeName: task
+    });
+  };
+
+  public changeNameOnChange = (e: any) => {
+    this.setState({
+      changeName: e.target.value
     });
   };
 
@@ -95,7 +126,17 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
       {
         title: "操作",
         render: (text: object, record: any) => (
-          <div onClick={() => this.showDeleteConfirm(record.id)}>删除</div>
+          <div>
+            <Button
+              type="primary"
+              onClick={() => this.showEditModal(record.id, record.task)}
+            >
+              编辑
+            </Button>
+            <Button onClick={() => this.showDeleteConfirm(record.id)}>
+              删除
+            </Button>
+          </div>
         )
       }
     ];
@@ -128,6 +169,23 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
         </div>
 
         <Table rowKey="id" dataSource={global.data} columns={columns} />
+        <Modal
+          title="Basic Modal"
+          visible={this.state.visible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+        >
+          <Row>
+            <Col span={6}>名称:</Col>
+            <Col span={6}>
+              <Input
+                value={this.state.changeName}
+                onChange={this.changeNameOnChange}
+              />
+            </Col>
+          </Row>
+        </Modal>
+
         <Router>
           <NavLink exact to="/">
             TO TEST

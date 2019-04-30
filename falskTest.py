@@ -56,9 +56,20 @@ class DeleteRouter(Resource):
         }
         return res
 
+class EditRoute(Resource):
+    def post(self):
+        args = parser.parse_args()
+        result = collection.update_one({'id': int(args['id'])}, { "$set": { "task": args['task'] } })
+        res = {
+          "status": 0,
+        }
+        return res
+
+
 
 api.add_resource(TestRoute, '/test')
 api.add_resource(DeleteRouter, '/test/delete')
+api.add_resource(EditRoute, '/test/edit')
 
 if __name__ == '__main__':
     app.run(debug=True)

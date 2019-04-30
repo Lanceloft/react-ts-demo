@@ -50,7 +50,24 @@ export function deleteItem(id: number): (dispatch: Dispatch) => void {
   };
   return (dispatch: Dispatch) => {
     http.post("http://127.0.0.1:5000/test/delete", param).then(data => {
-      console.log(data);
+      if (data.status === 0) {
+        dispatch<any>(getTask(""));
+      }
+    });
+  };
+}
+
+export function editItem(
+  id: number,
+  name: string
+): (dispatch: Dispatch) => void {
+  const param = {
+    id: id,
+    task: name
+  };
+
+  return (dispatch: Dispatch) => {
+    http.post("http://127.0.0.1:5000/test/edit", param).then(data => {
       if (data.status === 0) {
         dispatch<any>(getTask(""));
       }
