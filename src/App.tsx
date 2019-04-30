@@ -12,6 +12,10 @@ import * as actions from "./actions/index";
 import Test from "./pages/Test/Index";
 import New from "./pages/New/Index";
 
+export interface Record {
+  id: number
+}
+
 export interface IHomePageState {
   number: number;
 }
@@ -22,6 +26,7 @@ export interface IHomePageProps {
   reduceNumber: () => void;
   setNumber: (number: Number) => void;
   getTask: () => void;
+  deleteItem: (id : number) => void;
 }
 
 class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
@@ -42,6 +47,11 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     });
   };
 
+  public deleteItem = (id : number) => {
+    console.log(id)
+    this.props.deleteItem(id)
+  }
+
   public render() {
     const { global } = this.props;
     const { number } = this.state;
@@ -54,6 +64,11 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
       title: '名称',
       dataIndex: 'task',
       key: 'task',
+    }, {
+      title: '操作',
+      render: (text : object, record : any) => (
+        <div onClick={() => this.deleteItem(record.id)}>删除</div>
+      )
     }];
 
     return (

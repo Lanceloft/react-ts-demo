@@ -11,15 +11,18 @@ CORS(app)
 
 parser = reqparse.RequestParser()
 parser.add_argument('task')
+parser.add_argument('id')
+
+
+client = pymongo.MongoClient(host='localhost', port=27017)
+db = client.test
+collection = db.todos
+
+idCollection = db.students
 
 class TestRoute(Resource):
-
     def get(self):
-        client = pymongo.MongoClient(host='localhost', port=27017)
-        db = client.test
-        collection = db.todos
-        results = json.loads(dumps(list(collection.find({}, {"_id" : 0}))))
-        print(results)
+        results = json.loads(dumps(list(collection.find({}))))
         res = {
           "status": 0,
           "data": results
@@ -28,10 +31,17 @@ class TestRoute(Resource):
 
     def post(self):
         args = parser.parse_args()
-        client = pymongo.MongoClient(host='localhost', port=27017)
-        db = client.test
-        collection = db.todos
-        result = collection.insert_one({'task': args['task'], 'id': collection.find().count()})
+        insertId = idCollection.insert_one({'id': idCollection.find().count()})
+        result = collection.insert_one({'task': args['task'], 'id': idCollection.find().count()})
+        res = {
+          "status": 0,
+        }
+        return res
+
+class DeleteRouter(Resource):
+    def post(self):
+        args = parser.parse_args()
+        result = collection.delete_one({'id': int(args['id'])})
         res = {
           "status": 0,
         }
@@ -39,6 +49,7 @@ class TestRoute(Resource):
 
 
 api.add_resource(TestRoute, '/test')
+api.add_resource(DeleteRouter, '/test/delete')
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -27,7 +27,8 @@ const http = {
         return resolve(error);
       })
     })
-  }
+  },
+
 }
 
 export default http;
