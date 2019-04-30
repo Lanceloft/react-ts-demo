@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Button, Input, Table } from "antd";
+import { Button, Input, Table, Modal } from "antd";
 import {
   BrowserRouter as Router,
   Route,
@@ -12,13 +12,15 @@ import * as actions from "./actions/index";
 import Test from "./pages/Test/Index";
 import New from "./pages/New/Index";
 
+const confirm = Modal.confirm;
+
 export interface Record {
   id: number;
 }
 
 export interface IHomePageState {
   number: number;
-  searchNumber: string;
+  searchName: string;
 }
 
 export interface IHomePageProps {
@@ -35,7 +37,7 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     super(props);
     this.state = {
       number: 0,
-      searchNumber: ""
+      searchName: ""
     };
   }
 
@@ -49,15 +51,30 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     });
   };
 
-  public searchNumberOnChange = (e: any) => {
+  public searchNameOnChange = (e: any) => {
     this.setState({
-      searchNumber: e.target.value
+      searchName: e.target.value
     });
   };
 
   public deleteItem = (id: number) => {
     console.log(id);
     this.props.deleteItem(id);
+  };
+
+  public showDeleteConfirm = (id: number) => {
+    let that = this;
+    confirm({
+      title: "Are you sure delete this task?",
+      content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        that.props.deleteItem(id);
+      },
+      onCancel() {}
+    });
   };
 
   public render() {
@@ -78,7 +95,7 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
       {
         title: "操作",
         render: (text: object, record: any) => (
-          <div onClick={() => this.deleteItem(record.id)}>删除</div>
+          <div onClick={() => this.showDeleteConfirm(record.id)}>删除</div>
         )
       }
     ];
@@ -102,10 +119,10 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
         <div>
           <Input
             style={{ width: "200px" }}
-            value={this.state.searchNumber}
-            onChange={this.searchNumberOnChange}
+            value={this.state.searchName}
+            onChange={this.searchNameOnChange}
           />
-          <Button onClick={() => this.props.getTask(this.state.searchNumber)}>
+          <Button onClick={() => this.props.getTask(this.state.searchName)}>
             查询
           </Button>
         </div>

@@ -22,8 +22,7 @@ idCollection = db.students
 
 class TestRoute(Resource):
     def get(self):
-        print(request.args.get("id"))
-        if request.args.get("id") == '':
+        if request.args.get("task") == '':
             results = json.loads(dumps(list(collection.find({}))))
             res = {
               "status": 0,
@@ -31,7 +30,7 @@ class TestRoute(Resource):
             }
             return res
         else:
-            results = json.loads(dumps(list(collection.find({"id": int(request.args.get("id"))}))))
+            results = json.loads(dumps(list(collection.find({"task": {"$regex": request.args.get("task")}}))))
             res = {
               "status": 0,
               "data": results

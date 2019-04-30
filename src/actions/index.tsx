@@ -30,9 +30,9 @@ export function setNumber(number: Number): (dispatch: Dispatch) => void {
   };
 }
 
-export function getTask(searchNumber: string): (dispatch: Dispatch) => void {
+export function getTask(taskName: string): (dispatch: Dispatch) => void {
   const param = {
-    id: searchNumber
+    task: taskName
   };
   return (dispatch: Dispatch) => {
     http.get("http://127.0.0.1:5000/test", param).then(data => {
