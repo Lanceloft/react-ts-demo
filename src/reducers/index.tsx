@@ -3,7 +3,7 @@ import { ADD_NUMBER, REDUCE_NUMBER, GET_TASL } from "../constants";
 
 const initState: IGlobalStoreState = {
   amount: 0,
-  data: [],
+  data: []
 };
 
 export function globalReducers(
@@ -17,7 +17,7 @@ export function globalReducers(
     case REDUCE_NUMBER:
       return { ...state, amount: state.amount - 1 };
     case GET_TASL:
-      return { ...state, data: payload};
+      return { ...state, data: payload };
     default:
       return { ...state };
   }

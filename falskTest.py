@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 from flask_restful import reqparse, abort, Api, Resource
 from bson.json_util import loads, dumps, RELAXED_JSON_OPTIONS, CANONICAL_JSON_OPTIONS
@@ -22,12 +22,22 @@ idCollection = db.students
 
 class TestRoute(Resource):
     def get(self):
-        results = json.loads(dumps(list(collection.find({}))))
-        res = {
-          "status": 0,
-          "data": results
-        }
-        return res
+        print(request.args.get("id"))
+        if request.args.get("id") == '':
+            results = json.loads(dumps(list(collection.find({}))))
+            res = {
+              "status": 0,
+              "data": results
+            }
+            return res
+        else:
+            results = json.loads(dumps(list(collection.find({"id": int(request.args.get("id"))}))))
+            res = {
+              "status": 0,
+              "data": results
+            }
+            return res
+
 
     def post(self):
         args = parser.parse_args()

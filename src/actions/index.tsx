@@ -24,15 +24,18 @@ export function setNumber(number: Number): (dispatch: Dispatch) => void {
   return (dispatch: Dispatch) => {
     http.post("http://127.0.0.1:5000/test", param).then(data => {
       if (data.status === 0) {
-        dispatch<any>(getTask());
+        dispatch<any>(getTask(""));
       }
     });
   };
 }
 
-export function getTask(): (dispatch: Dispatch) => void {
+export function getTask(searchNumber: string): (dispatch: Dispatch) => void {
+  const param = {
+    id: searchNumber
+  };
   return (dispatch: Dispatch) => {
-    http.get("http://127.0.0.1:5000/test").then(data => {
+    http.get("http://127.0.0.1:5000/test", param).then(data => {
       dispatch({
         type: constants.GET_TASL,
         payload: data.data
@@ -49,7 +52,7 @@ export function deleteItem(id: number): (dispatch: Dispatch) => void {
     http.post("http://127.0.0.1:5000/test/delete", param).then(data => {
       console.log(data);
       if (data.status === 0) {
-        dispatch<any>(getTask());
+        dispatch<any>(getTask(""));
       }
     });
   };
