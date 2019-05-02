@@ -11,12 +11,11 @@ import { IStoreState, IGlobalStoreState } from "./reducers/types";
 import * as actions from "./actions/index";
 import Test from "./pages/Test/Index";
 import New from "./pages/New/Index";
+import ChooseImagesModal from "./components/ChooseImagesModal";
+
+import "./App.less";
 
 const confirm = Modal.confirm;
-
-export interface Record {
-  id: number;
-}
 
 export interface IHomePageState {
   number: number;
@@ -24,6 +23,7 @@ export interface IHomePageState {
   visible: boolean;
   editId: number;
   changeName: string;
+  chooseImagesVisible: boolean;
 }
 
 export interface IHomePageProps {
@@ -44,7 +44,8 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
       searchName: "",
       visible: false,
       editId: 0,
-      changeName: ""
+      changeName: "",
+      chooseImagesVisible: false
     };
   }
 
@@ -108,6 +109,20 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     });
   };
 
+  public chooseImagesConfirm = () => {};
+
+  public chooseImagesCancel = () => {
+    this.setState({
+      chooseImagesVisible: false
+    });
+  };
+
+  public openUploadModal = () => {
+    this.setState({
+      chooseImagesVisible: true
+    });
+  };
+
   public render() {
     const { global } = this.props;
     const { number } = this.state;
@@ -126,16 +141,12 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
       {
         title: "操作",
         render: (text: object, record: any) => (
-          <div>
-            <Button
-              type="primary"
-              onClick={() => this.showEditModal(record.id, record.task)}
-            >
+          <div className="config-operation">
+            <span onClick={() => this.showEditModal(record.id, record.task)}>
               编辑
-            </Button>
-            <Button onClick={() => this.showDeleteConfirm(record.id)}>
-              删除
-            </Button>
+            </span>
+            <span onClick={() => this.openUploadModal()}>上传图片</span>
+            <span onClick={() => this.showDeleteConfirm(record.id)}>删除</span>
           </div>
         )
       }
@@ -185,6 +196,12 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
             </Col>
           </Row>
         </Modal>
+
+        <ChooseImagesModal
+          chooseImagesVisible={this.state.chooseImagesVisible}
+          chooseImagesConfirm={this.chooseImagesConfirm}
+          chooseImagesCancel={this.chooseImagesCancel}
+        />
 
         <Router>
           <NavLink exact to="/">
