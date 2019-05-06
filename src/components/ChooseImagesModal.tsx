@@ -53,7 +53,7 @@ class ChooseImagesModal extends React.Component<
         {imageList.map((item, index) => (
           <ImageContent key={index} data={item} />
         ))}
-        <UploadImages />
+        <UploadImages getImagesList={this.getImagesList} />
       </Modal>
     );
   }

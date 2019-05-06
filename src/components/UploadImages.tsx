@@ -7,7 +7,9 @@ export interface IHomePageState {
   imageUrl: string;
 }
 
-export interface IHomePageProps {}
+export interface IHomePageProps {
+  getImagesList: () => void;
+}
 
 const client = new OSS({
   region: "oss-ap-southeast-1",
@@ -29,24 +31,6 @@ const UploadToOss = (file: any) => {
   });
 };
 
-function beforeUpload(file: any) {
-  const isJPG = file.type === "image/jpeg" || file.type === "image/png";
-  if (!isJPG) {
-    message.error("You can only upload JPG/PNG file!");
-  } else {
-    let reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      UploadToOss(file).then((data: any) => {
-        console.log(data.res.status);
-        if (data.res.status === 200) {
-        }
-      });
-    };
-  }
-  return false;
-}
-
 class UploadImages extends React.Component<IHomePageProps, IHomePageState> {
   constructor(props: IHomePageProps) {
     super(props);
@@ -56,8 +40,25 @@ class UploadImages extends React.Component<IHomePageProps, IHomePageState> {
     };
   }
 
-  public uploadOnChange = (info: any) => {
-    console.log(info);
+  public uploadOnChange = (info: any) => {};
+
+  public beforeUpload = (file: any) => {
+    const isJPG = file.type === "image/jpeg" || file.type === "image/png";
+    if (!isJPG) {
+      message.error("You can only upload JPG/PNG file!");
+    } else {
+      let reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        UploadToOss(file).then((data: any) => {
+          console.log(data.res.status);
+          if (data.res.status) {
+            this.props.getImagesList();
+          }
+        });
+      };
+    }
+    return false;
   };
 
   render() {
@@ -75,7 +76,7 @@ class UploadImages extends React.Component<IHomePageProps, IHomePageState> {
         listType="picture-card"
         className="avatar-uploader"
         showUploadList={false}
-        beforeUpload={beforeUpload}
+        beforeUpload={this.beforeUpload}
         onChange={this.uploadOnChange}
       >
         {imageUrl ? <img src={imageUrl} alt="avatar" /> : uploadButton}
