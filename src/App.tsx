@@ -145,7 +145,7 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
             <span onClick={() => this.showEditModal(record.id, record.task)}>
               编辑
             </span>
-            <span onClick={() => this.openUploadModal()}>上传图片</span>
+            <span onClick={() => this.openUploadModal()}>选择图片</span>
             <span onClick={() => this.showDeleteConfirm(record.id)}>删除</span>
           </div>
         )

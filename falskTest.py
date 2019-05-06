@@ -5,6 +5,8 @@ from bson.json_util import loads, dumps, RELAXED_JSON_OPTIONS, CANONICAL_JSON_OP
 import pymongo
 import json
 
+from CosPy import *
+
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
@@ -70,6 +72,8 @@ class EditRoute(Resource):
 api.add_resource(TestRoute, '/test')
 api.add_resource(DeleteRouter, '/test/delete')
 api.add_resource(EditRoute, '/test/edit')
+api.add_resource(GetCos, '/test/getImagesList')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

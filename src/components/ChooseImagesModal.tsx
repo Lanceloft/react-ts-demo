@@ -1,7 +1,13 @@
 import * as React from "react";
 import { Modal } from "antd";
+import http from "../common/http";
+import ImageContent from "./ImageContent/ImageContent";
+import UploadImages from "./UploadImages";
 
-export interface IHomePageState {}
+export interface IHomePageState {
+  getImagesList?: () => void;
+  imageList: object[];
+}
 
 export interface IHomePageProps {
   chooseImagesVisible: boolean;
@@ -13,7 +19,30 @@ class ChooseImagesModal extends React.Component<
   IHomePageProps,
   IHomePageState
 > {
+  constructor(props: IHomePageProps) {
+    super(props);
+    this.state = {
+      imageList: []
+    };
+  }
+
+  componentDidMount() {
+    this.getImagesList();
+  }
+
+  public getImagesList = () => {
+    http.get("/test/getImagesList").then(data => {
+      if (data.status === 0) {
+        this.setState({
+          imageList: data.list
+        });
+      }
+    });
+  };
+
   render() {
+    const { imageList } = this.state;
+
     return (
       <Modal
         title="Basic Modal"
@@ -21,9 +50,10 @@ class ChooseImagesModal extends React.Component<
         onOk={this.props.chooseImagesConfirm}
         onCancel={this.props.chooseImagesCancel}
       >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        {imageList.map((item, index) => (
+          <ImageContent key={index} data={item} />
+        ))}
+        <UploadImages />
       </Modal>
     );
   }

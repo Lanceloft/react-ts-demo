@@ -1,3 +1,5 @@
+@import "./styles/init.less";
+
 .App {
   text-align: center;
 }
@@ -33,5 +35,13 @@
 }
 
 .config-operation {
-  color: red;
+  span {
+    margin-right: 10px;
+    color: @operation;
+    cursor: pointer;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
 }

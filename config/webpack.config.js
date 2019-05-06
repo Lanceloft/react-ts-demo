@@ -455,7 +455,6 @@ module.exports = function(webpackEnv) {
                 "sass-loader"
               )
             },
-
             {
               test: lessRegex,
               exclude: lessModuleRegex,
@@ -464,7 +463,13 @@ module.exports = function(webpackEnv) {
                   importLoaders: 2,
                   sourceMap: isEnvProduction && shouldUseSourceMap
                 },
-                "less-loader"
+                "less-loader",
+                {
+                  loader: "sass-resources-loader",
+                  options: {
+                    resources: [require.resolve("../src/styles/init.less")]
+                  }
+                }
               ),
               sideEffects: true
             },
@@ -477,7 +482,13 @@ module.exports = function(webpackEnv) {
                   modules: true,
                   getLocalIdent: getCSSModuleLocalIdent
                 },
-                "less-loader"
+                "less-loader",
+                {
+                  loader: "sass-resources-loader",
+                  options: {
+                    resources: [require.resolve("../src/styles/init.less")]
+                  }
+                }
               )
             },
 
