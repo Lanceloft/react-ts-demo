@@ -2,6 +2,7 @@ import * as constants from "../constants";
 import { IAction } from "../reducers/types";
 import { Dispatch } from "redux";
 import http from "../common/http";
+import paramInspect from "../common/paramInspect";
 
 export function addNumber(): IAction {
   return {
@@ -59,15 +60,17 @@ export function deleteItem(id: number): (dispatch: Dispatch) => void {
 
 export function editItem(
   id: number,
-  name: string
+  name: string,
+  image: string
 ): (dispatch: Dispatch) => void {
   const param = {
     id: id,
-    task: name
+    task: name,
+    image: image
   };
 
   return (dispatch: Dispatch) => {
-    http.post("/test/edit", param).then(data => {
+    http.post("/test/edit", paramInspect(param)).then(data => {
       if (data.status === 0) {
         dispatch<any>(getTask(""));
       }

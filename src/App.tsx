@@ -23,6 +23,7 @@ export interface IHomePageState {
   visible: boolean;
   editId: number;
   changeName: string;
+  imageUrl: string;
   chooseImagesVisible: boolean;
 }
 
@@ -33,7 +34,7 @@ export interface IHomePageProps {
   setNumber: (number: Number) => void;
   getTask: (searchNumber: string) => void;
   deleteItem: (id: number) => void;
-  editItem: (id: number, name: string) => void;
+  editItem: (id: number, name: string, image: string) => void;
 }
 
 class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
@@ -45,6 +46,7 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
       visible: false,
       editId: 0,
       changeName: "",
+      imageUrl: "",
       chooseImagesVisible: false
     };
   }
@@ -84,7 +86,11 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
   };
 
   public handleOk = () => {
-    this.props.editItem(this.state.editId, this.state.changeName);
+    this.props.editItem(
+      this.state.editId,
+      this.state.changeName,
+      this.state.imageUrl
+    );
     this.handleCancel();
   };
 
@@ -95,11 +101,12 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     });
   };
 
-  public showEditModal = (id: number, task: string) => {
+  public showEditModal = (record: any) => {
     this.setState({
       visible: true,
-      editId: id,
-      changeName: task
+      editId: record.id,
+      changeName: record.task,
+      imageUrl: record.image
     });
   };
 
@@ -109,7 +116,12 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     });
   };
 
-  public chooseImagesConfirm = () => {};
+  public chooseImagesConfirm = (url: string) => {
+    this.props.editItem(this.state.editId, this.state.changeName, url);
+    this.setState({
+      chooseImagesVisible: false
+    });
+  };
 
   public chooseImagesCancel = () => {
     this.setState({
@@ -117,8 +129,11 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     });
   };
 
-  public openUploadModal = () => {
+  public openUploadModal = (record: any) => {
     this.setState({
+      editId: record.id,
+      changeName: record.task,
+      imageUrl: record.image,
       chooseImagesVisible: true
     });
   };
@@ -139,13 +154,19 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
         key: "task"
       },
       {
+        title: "图片",
+        render: (text: object, record: any) => (
+          <div className="image-operation">
+            <img className="image-preview" src={record.image} />
+          </div>
+        )
+      },
+      {
         title: "操作",
         render: (text: object, record: any) => (
           <div className="config-operation">
-            <span onClick={() => this.showEditModal(record.id, record.task)}>
-              编辑
-            </span>
-            <span onClick={() => this.openUploadModal()}>选择图片</span>
+            <span onClick={() => this.showEditModal(record)}>编辑</span>
+            <span onClick={() => this.openUploadModal(record)}>选择图片</span>
             <span onClick={() => this.showDeleteConfirm(record.id)}>删除</span>
           </div>
         )
@@ -199,7 +220,7 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
 
         <ChooseImagesModal
           chooseImagesVisible={this.state.chooseImagesVisible}
-          chooseImagesConfirm={this.chooseImagesConfirm}
+          chooseImagesConfirm={url => this.chooseImagesConfirm(url)}
           chooseImagesCancel={this.chooseImagesCancel}
         />
 

@@ -51,7 +51,6 @@ class UploadImages extends React.Component<IHomePageProps, IHomePageState> {
       reader.readAsDataURL(file);
       reader.onloadend = () => {
         UploadToOss(file).then((data: any) => {
-          console.log(data.res.status);
           if (data.res.status) {
             this.props.getImagesList();
           }

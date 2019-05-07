@@ -7,12 +7,17 @@ import UploadImages from "./UploadImages";
 export interface IHomePageState {
   getImagesList?: () => void;
   imageList: object[];
+  chooseImageUrl?: string;
 }
 
 export interface IHomePageProps {
   chooseImagesVisible: boolean;
-  chooseImagesConfirm: () => void;
+  chooseImagesConfirm: (url: any) => void;
   chooseImagesCancel: () => void;
+}
+
+export interface ChooseImage {
+  url?: string;
 }
 
 class ChooseImagesModal extends React.Component<
@@ -22,7 +27,8 @@ class ChooseImagesModal extends React.Component<
   constructor(props: IHomePageProps) {
     super(props);
     this.state = {
-      imageList: []
+      imageList: [],
+      chooseImageUrl: ""
     };
   }
 
@@ -40,6 +46,26 @@ class ChooseImagesModal extends React.Component<
     });
   };
 
+  public chooseImage = (item: ChooseImage) => {
+    this.setState({
+      chooseImageUrl: item.url
+    });
+  };
+
+  public chooseImagesCancel = () => {
+    this.setState({
+      chooseImageUrl: ""
+    });
+    this.props.chooseImagesCancel();
+  };
+
+  public chooseImagesConfirm = () => {
+    this.setState({
+      chooseImageUrl: ""
+    });
+    this.props.chooseImagesConfirm(this.state.chooseImageUrl);
+  };
+
   render() {
     const { imageList } = this.state;
 
@@ -47,11 +73,18 @@ class ChooseImagesModal extends React.Component<
       <Modal
         title="Basic Modal"
         visible={this.props.chooseImagesVisible}
-        onOk={this.props.chooseImagesConfirm}
-        onCancel={this.props.chooseImagesCancel}
+        onOk={this.chooseImagesConfirm}
+        onCancel={this.chooseImagesCancel}
       >
         {imageList.map((item, index) => (
-          <ImageContent key={index} data={item} />
+          <ImageContent
+            key={index}
+            data={item}
+            chooseImageUrl={this.state.chooseImageUrl}
+            chooseImage={() => {
+              this.chooseImage(item);
+            }}
+          />
         ))}
         <UploadImages getImagesList={this.getImagesList} />
       </Modal>

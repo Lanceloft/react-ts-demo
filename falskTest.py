@@ -14,6 +14,7 @@ CORS(app)
 parser = reqparse.RequestParser()
 parser.add_argument('task')
 parser.add_argument('id')
+parser.add_argument('image')
 
 
 client = pymongo.MongoClient(host='localhost', port=27017)
@@ -43,7 +44,7 @@ class TestRoute(Resource):
     def post(self):
         args = parser.parse_args()
         insertId = idCollection.insert_one({'id': idCollection.find().count()})
-        result = collection.insert_one({'task': args['task'], 'id': idCollection.find().count()})
+        result = collection.insert_one({'task': args['task'], 'id': idCollection.find().count(), 'image': args['image']})
         res = {
           "status": 0,
         }
@@ -61,13 +62,17 @@ class DeleteRouter(Resource):
 class EditRoute(Resource):
     def post(self):
         args = parser.parse_args()
-        result = collection.update_one({'id': int(args['id'])}, { "$set": { "task": args['task'] } })
-        res = {
-          "status": 0,
-        }
-        return res
-
-
+        result = collection.update_one({'id': int(args['id'])}, { "$set": { "task": args['task'], "image": args['image'] } })
+        if result.matched_count > 0:
+            res = {
+              "status": 0,
+            }
+            return res
+        else:
+            res = {
+              "status": 1,
+            }
+            return res
 
 api.add_resource(TestRoute, '/test')
 api.add_resource(DeleteRouter, '/test/delete')
