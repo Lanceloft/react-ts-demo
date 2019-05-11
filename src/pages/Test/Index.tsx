@@ -58,6 +58,17 @@ class LoginComponent extends React.Component<IHomePageProps, IHomePageState> {
     });
   };
 
+  public login = () => {
+    let param = {
+      username: this.state.loginUserName,
+      password: this.state.loginPassword
+    };
+
+    http.post("/test/login", param).then(data => {
+      console.log(data);
+    });
+  };
+
   render() {
     return (
       <div className="login-form">
@@ -102,7 +113,9 @@ class LoginComponent extends React.Component<IHomePageProps, IHomePageState> {
             onChange={this.loginPasswordOnChange}
           />
         </div>
-        <Button type="primary">登录</Button>
+        <Button type="primary" onClick={this.login}>
+          登录
+        </Button>
       </div>
     );
   }

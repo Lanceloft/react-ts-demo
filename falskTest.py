@@ -87,7 +87,7 @@ class RegisterRoute(Resource):
         password = args['password']
         if (usersCollection.find_one({'username': args['username']})) is None:
             insertUser = usersCollection.insert_one({'username': username, 'password': hashlib.sha256(password.encode("utf-8")).hexdigest()})
-            if insertUser.inserted_ids:
+            if insertUser.inserted_id:
                 res = {
                   "status": 0,
                 }
@@ -104,11 +104,38 @@ class RegisterRoute(Resource):
             }
             return res
 
+class LoginRouter(Resource):
+    def post(self):
+        args = parser.parse_args()
+        username = args['username']
+        password = args['password']
+        if (usersCollection.find_one({'username': args['username']})) is None:
+            res = {
+                "status": 1,
+                "message": '用户不存在'
+            }
+            return res
+        else:
+            if (hashlib.sha256(password.encode("utf-8")).hexdigest() == usersCollection.find_one({'username': args['username']})['password']):
+                res = {
+                    "status": 0,
+                    "message": '登陆成功'
+                }
+                return res
+            else:
+                res = {
+                    "status": 1,
+                    "message": '密码不正确'
+                }
+                return res
+
+
 api.add_resource(TestRoute, '/test')
 api.add_resource(DeleteRouter, '/test/delete')
 api.add_resource(EditRoute, '/test/edit')
 api.add_resource(GetCos, '/test/getImagesList')
 api.add_resource(RegisterRoute, '/test/register')
+api.add_resource(LoginRouter, '/test/login')
 
 
 if __name__ == '__main__':
