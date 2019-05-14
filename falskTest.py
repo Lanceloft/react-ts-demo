@@ -7,12 +7,38 @@ import json
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app, g
 import hashlib
+# 验证
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous import SignatureExpired, BadSignature
+from functools import wraps
+from flask_httpauth import HTTPBasicAuth
+
+
+import datetime
+import random
 
 from CosPy import *
+
+cacheList = []
+class MyCache:
+    def update(self, key, token):
+        if len(cacheList) == 0:
+            data = {key: token, 'expires': datetime.date.today() + datetime.timedelta(days=1)}
+            cacheList.append(data)
+        else:
+            for items in cacheList:
+                if (items['expires'] - datetime.date.today()).days <= 0:
+                    cacheList.remove(items)
+                if key in items:
+                    print('已经存在相同key')
+                else:
+                    data = {key: token, 'expires': datetime.date.today() + datetime.timedelta(days=1)}
+                    cacheList.append(data)
 
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
+app.config['SECRET_KEY'] = 'the random string'
 
 parser = reqparse.RequestParser()
 parser.add_argument('task')
@@ -28,23 +54,47 @@ collection = db.todos
 idCollection = db.students
 usersCollection = db.users
 
+auth = HTTPBasicAuth()
+
+def gen_token(username):
+    s = Serializer(app.config['SECRET_KEY'], expires_in=1440*31*60)
+    return s.dumps({'token': username})
+
+def vertify_token(token):
+    s = Serializer(app.config['SECRET_KEY'], expires_in=1440*31*60)
+    user = s.loads(token)
+    print(user['token'])
+    if usersCollection.find_one({'username': user['token']}):
+        return True
+    else:
+        return False
+
 
 class TestRoute(Resource):
     def get(self):
-        if request.args.get("task") == '':
-            results = json.loads(dumps(list(collection.find({}))))
-            res = {
-              "status": 0,
-              "data": results
-            }
-            return res
+        token = request.headers['Token']
+        if vertify_token(token):
+            if request.args.get("task") == '':
+                results = json.loads(dumps(list(collection.find({}))))
+                res = {
+                  "status": 0,
+                  "data": results
+                }
+                return res
+            else:
+                results = json.loads(dumps(list(collection.find({"task": {"$regex": request.args.get("task")}}))))
+                res = {
+                  "status": 0,
+                  "data": results
+                }
+                return res
         else:
-            results = json.loads(dumps(list(collection.find({"task": {"$regex": request.args.get("task")}}))))
             res = {
-              "status": 0,
-              "data": results
+              "status": 2,
+              "data": '未认证'
             }
             return res
+
 
 
     def post(self):
@@ -95,6 +145,7 @@ class RegisterRoute(Resource):
             else:
                 res = {
                   "status": 1,
+                  "message": '写入失败'
                 }
                 return res
         else:
@@ -119,7 +170,8 @@ class LoginRouter(Resource):
             if (hashlib.sha256(password.encode("utf-8")).hexdigest() == usersCollection.find_one({'username': args['username']})['password']):
                 res = {
                     "status": 0,
-                    "message": '登陆成功'
+                    "message": '登陆成功',
+                    'token': bytes.decode(gen_token(username))
                 }
                 return res
             else:
@@ -136,7 +188,6 @@ api.add_resource(EditRoute, '/test/edit')
 api.add_resource(GetCos, '/test/getImagesList')
 api.add_resource(RegisterRoute, '/test/register')
 api.add_resource(LoginRouter, '/test/login')
-
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Input, Button } from "antd";
 import http from "@/common/http.js";
+import { setCookie } from "../../common/cookies";
 import "./Index.less";
 
 export interface IHomePageState {
@@ -66,6 +67,9 @@ class LoginComponent extends React.Component<IHomePageProps, IHomePageState> {
 
     http.post("/test/login", param).then(data => {
       console.log(data);
+      if (data.status === 0) {
+        setCookie("TOKEN", data.token);
+      }
     });
   };
 

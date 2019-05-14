@@ -37,10 +37,12 @@ export function getTask(taskName: string): (dispatch: Dispatch) => void {
   };
   return (dispatch: Dispatch) => {
     http.get("/test", param).then(data => {
-      dispatch({
-        type: constants.GET_TASL,
-        payload: data.data
-      });
+      if (data.status === 0) {
+        dispatch({
+          type: constants.GET_TASL,
+          payload: data.data
+        });
+      }
     });
   };
 }
