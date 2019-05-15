@@ -61,11 +61,13 @@ def gen_token(username):
     return s.dumps({'token': username})
 
 def vertify_token(token):
-    s = Serializer(app.config['SECRET_KEY'], expires_in=1440*31*60)
-    user = s.loads(token)
-    print(user['token'])
-    if usersCollection.find_one({'username': user['token']}):
-        return True
+    if token:
+        s = Serializer(app.config['SECRET_KEY'], expires_in=1440*31*60)
+        user = s.loads(token)
+        if usersCollection.find_one({'username': user['token']}):
+            return True
+        else:
+            return False
     else:
         return False
 
@@ -98,35 +100,59 @@ class TestRoute(Resource):
 
 
     def post(self):
-        args = parser.parse_args()
-        insertId = idCollection.insert_one({'id': idCollection.find().count()})
-        result = collection.insert_one({'task': args['task'], 'id': idCollection.find().count(), 'image': args['image']})
-        res = {
-          "status": 0,
-        }
-        return res
-
-class DeleteRouter(Resource):
-    def post(self):
-        args = parser.parse_args()
-        result = collection.delete_one({'id': int(args['id'])})
-        res = {
-          "status": 0,
-        }
-        return res
-
-class EditRoute(Resource):
-    def post(self):
-        args = parser.parse_args()
-        result = collection.update_one({'id': int(args['id'])}, { "$set": { "task": args['task'], "image": args['image'] } })
-        if result.matched_count > 0:
+        token = request.headers['Token']
+        if vertify_token(token):
+            args = parser.parse_args()
+            insertId = idCollection.insert_one({'id': idCollection.find().count()})
+            result = collection.insert_one({'task': args['task'], 'id': idCollection.find().count(), 'image': args['image']})
             res = {
               "status": 0,
             }
             return res
         else:
             res = {
-              "status": 1,
+              "status": 2,
+              "data": '未认证'
+            }
+            return res
+
+class DeleteRouter(Resource):
+    def post(self):
+        token = request.headers['Token']
+        if vertify_token(token):
+            args = parser.parse_args()
+            result = collection.delete_one({'id': int(args['id'])})
+            res = {
+              "status": 0,
+            }
+            return res
+        else:
+            res = {
+              "status": 2,
+              "data": '未认证'
+            }
+            return res
+
+class EditRoute(Resource):
+    def post(self):
+        token = request.headers['Token']
+        if vertify_token(token):
+            args = parser.parse_args()
+            result = collection.update_one({'id': int(args['id'])}, { "$set": { "task": args['task'], "image": args['image'] } })
+            if result.matched_count > 0:
+                res = {
+                  "status": 0,
+                }
+                return res
+            else:
+                res = {
+                  "status": 1,
+                }
+                return res
+        else:
+            res = {
+              "status": 2,
+              "data": '未认证'
             }
             return res
 

@@ -24,10 +24,29 @@ const http = {
     });
   },
 
-  post(repo, param) {
+  loginPost(repo, param) {
     return new Promise((resolve, reject) => {
       axios
         .post(baseUrl + repo, param)
+        .then(response => {
+          if (response.status === 200) {
+            resolve(response.data);
+          }
+        })
+        .catch(error => {
+          return resolve(error);
+        });
+    });
+  },
+
+  post(repo, param) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(baseUrl + repo, param, {
+          headers: {
+            token: getCookie("TOKEN")
+          }
+        })
         .then(response => {
           if (response.status === 200) {
             resolve(response.data);
