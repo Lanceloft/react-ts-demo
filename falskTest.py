@@ -19,22 +19,6 @@ import random
 
 from CosPy import *
 
-cacheList = []
-class MyCache:
-    def update(self, key, token):
-        if len(cacheList) == 0:
-            data = {key: token, 'expires': datetime.date.today() + datetime.timedelta(days=1)}
-            cacheList.append(data)
-        else:
-            for items in cacheList:
-                if (items['expires'] - datetime.date.today()).days <= 0:
-                    cacheList.remove(items)
-                if key in items:
-                    print('已经存在相同key')
-                else:
-                    data = {key: token, 'expires': datetime.date.today() + datetime.timedelta(days=1)}
-                    cacheList.append(data)
-
 app = Flask(__name__)
 api = Api(app)
 CORS(app)

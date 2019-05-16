@@ -1,40 +1,26 @@
 import * as React from "react";
 import { Input, Button } from "antd";
 import http from "@/common/http.js";
+import PropTypes from "prop-types";
 import { setCookie } from "../../common/cookies";
-import "./Index.less";
 
 export interface IHomePageState {
-  userName: string;
-  password: string;
   loginUserName: string;
   loginPassword: string;
 }
 
-export interface IHomePageProps {}
+export interface IHomePageProps {
+  history: any;
+}
 
 class LoginComponent extends React.Component<IHomePageProps, IHomePageState> {
   constructor(props: IHomePageProps) {
     super(props);
     this.state = {
-      userName: "",
-      password: "",
       loginUserName: "",
       loginPassword: ""
     };
   }
-
-  public userNameOnChange = (e: any) => {
-    this.setState({
-      userName: e.target.value
-    });
-  };
-
-  public passwordOnChange = (e: any) => {
-    this.setState({
-      password: e.target.value
-    });
-  };
 
   public loginUserNameOnChange = (e: any) => {
     this.setState({
@@ -48,17 +34,6 @@ class LoginComponent extends React.Component<IHomePageProps, IHomePageState> {
     });
   };
 
-  public register = () => {
-    let param = {
-      username: this.state.userName,
-      password: this.state.password
-    };
-
-    http.post("/test/register", param).then(data => {
-      console.log(data);
-    });
-  };
-
   public login = () => {
     let param = {
       username: this.state.loginUserName,
@@ -68,36 +43,25 @@ class LoginComponent extends React.Component<IHomePageProps, IHomePageState> {
     http.loginPost("/test/login", param).then(data => {
       console.log(data);
       if (data.status === 0) {
+        const { history } = this.props;
         setCookie("TOKEN", data.token);
+        history.push("/");
       }
     });
+  };
+
+  public toRegister = () => {
+    const { history } = this.props;
+    history.push("/register");
+  };
+
+  static propTypes = {
+    history: PropTypes.object.isRequired
   };
 
   render() {
     return (
       <div className="login-form">
-        <div>注册:</div>
-        <div className="login-item">
-          <div className="item-name">用户名</div>
-          <Input
-            className="item-value"
-            placeholder="user name"
-            value={this.state.userName}
-            onChange={this.userNameOnChange}
-          />
-        </div>
-        <div className="login-item">
-          <div className="item-name">密码</div>
-          <Input
-            className="item-value"
-            placeholder="password"
-            value={this.state.password}
-            onChange={this.passwordOnChange}
-          />
-        </div>
-        <Button type="primary" onClick={this.register}>
-          注册
-        </Button>
         <div>登录:</div>
         <div className="login-item">
           <div className="item-name">用户名</div>
@@ -120,6 +84,9 @@ class LoginComponent extends React.Component<IHomePageProps, IHomePageState> {
         <Button type="primary" onClick={this.login}>
           登录
         </Button>
+        <a style={{ marginLeft: "10px" }} onClick={this.toRegister}>
+          没有账号?注册
+        </a>
       </div>
     );
   }

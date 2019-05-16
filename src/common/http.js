@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getCookie, delCookie } from "./cookies";
+import { getCookie } from "./cookies";
 
 const baseUrl = "http://127.0.0.1:5000";
 
@@ -50,6 +50,9 @@ const http = {
         .then(response => {
           if (response.status === 200) {
             resolve(response.data);
+            if (response.data.code === 2) {
+              console.log("未认证");
+            }
           }
         })
         .catch(error => {
