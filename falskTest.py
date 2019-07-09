@@ -4,12 +4,11 @@ from flask_restful import reqparse, abort, Api, Resource
 from bson.json_util import loads, dumps, RELAXED_JSON_OPTIONS, CANONICAL_JSON_OPTIONS
 import pymongo
 import json
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app, g
 import hashlib
 # 验证
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from itsdangerous import SignatureExpired, BadSignature
+from itsdangerous import SignatureExpired, BadSignature, TimestampSigner
 from functools import wraps
 from flask_httpauth import HTTPBasicAuth
 
@@ -41,18 +40,21 @@ usersCollection = db.users
 auth = HTTPBasicAuth()
 
 def gen_token(username):
-    s = Serializer(app.config['SECRET_KEY'], expires_in=1440*31*60)
+    s = Serializer(app.config['SECRET_KEY'], expires_in=60 * 3600) # 时间单位为秒
     return s.dumps({'token': username})
 
 def vertify_token(token):
-    if token:
-        s = Serializer(app.config['SECRET_KEY'], expires_in=1440*31*60)
-        user = s.loads(token)
-        if usersCollection.find_one({'username': user['token']}):
-            return True
+    try:
+        if token:
+            s = Serializer(app.config['SECRET_KEY'], expires_in=60 * 3600)
+            user = s.loads(token)
+            if usersCollection.find_one({'username': user['token']}):
+                return True
+            else:
+                return False
         else:
             return False
-    else:
+    except SignatureExpired:
         return False
 
 
