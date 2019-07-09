@@ -1,14 +1,16 @@
 import * as React from "react";
 import { Input, Button } from "antd";
 import http from "@/common/http.js";
-import { setCookie } from "../../common/cookies";
+import PropTypes from "prop-types";
 
 export interface IHomePageState {
   userName: string;
   password: string;
 }
 
-export interface IHomePageProps {}
+export interface IHomePageProps {
+  history: any;
+}
 
 class LoginComponent extends React.Component<IHomePageProps, IHomePageState> {
   constructor(props: IHomePageProps) {
@@ -42,6 +44,15 @@ class LoginComponent extends React.Component<IHomePageProps, IHomePageState> {
     });
   };
 
+  public toLogin = () => {
+    const { history } = this.props;
+    history.push("/login");
+  };
+
+  static propTypes = {
+    history: PropTypes.object.isRequired
+  };
+
   render() {
     return (
       <div className="login-form">
@@ -67,6 +78,9 @@ class LoginComponent extends React.Component<IHomePageProps, IHomePageState> {
         <Button type="primary" onClick={this.register}>
           注册
         </Button>
+        <a style={{ marginLeft: "10px" }} onClick={this.toLogin}>
+          已有账号?登录
+        </a>
       </div>
     );
   }
