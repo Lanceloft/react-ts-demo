@@ -41,7 +41,6 @@ class LoginComponent extends React.Component<IHomePageProps, IHomePageState> {
     };
 
     http.loginPost("/test/login", param).then(data => {
-      console.log(data);
       if (data.status === 0) {
         const { history } = this.props;
         setCookie("TOKEN", data.token);

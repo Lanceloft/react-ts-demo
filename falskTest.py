@@ -56,6 +56,8 @@ def vertify_token(token):
             return False
     except SignatureExpired:
         return False
+    except BadSignature:
+        return False
 
 
 class TestRoute(Resource):

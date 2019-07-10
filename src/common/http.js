@@ -1,4 +1,5 @@
 import axios from "axios";
+import { message } from "antd";
 import { getCookie } from "./cookies";
 
 const baseUrl = "http://127.0.0.1:5000";
@@ -15,7 +16,18 @@ const http = {
         })
         .then(response => {
           if (response.status === 200) {
-            resolve(response.data);
+            switch (response.data.status) {
+              case 0:
+                resolve(response.data);
+                break;
+              case 2:
+                message.error("未登录");
+                setTimeout(() => {
+                  window.location.href = "/login";
+                }, 2000);
+                break;
+              default:
+            }
           }
         })
         .catch(error => {
@@ -49,9 +61,17 @@ const http = {
         })
         .then(response => {
           if (response.status === 200) {
-            resolve(response.data);
-            if (response.data.code === 2) {
-              console.log("未认证");
+            switch (response.data.status) {
+              case 0:
+                resolve(response.data);
+                break;
+              case 2:
+                message.error("未登录");
+                setTimeout(() => {
+                  window.location.href = "/login";
+                }, 2000);
+                break;
+              default:
             }
           }
         })

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Input, Button } from "antd";
+import { Input, Button, message } from "antd";
 import http from "@/common/http.js";
 import PropTypes from "prop-types";
 
@@ -40,7 +40,11 @@ class LoginComponent extends React.Component<IHomePageProps, IHomePageState> {
     };
 
     http.post("/test/register", param).then(data => {
-      console.log(data);
+      message.success("注册成功");
+      this.setState({
+        userName: "",
+        password: ""
+      });
     });
   };
 
