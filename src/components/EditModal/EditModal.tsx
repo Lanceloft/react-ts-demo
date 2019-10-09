@@ -90,7 +90,10 @@ class EditModal extends React.Component<IEditModalProps, IEditModalState> {
                       <div className="image-box" onClick={this.openChooseImagesModal}>+</div>
                       :
                       <div className="image-box">
-                        <img className="box-image" src={this.state.imageUrl} />
+                        <img
+                          className="box-image"
+                          src={this.state.imageUrl}
+                          onClick={this.openChooseImagesModal}/>
                       </div>
                   }
                 </div>
