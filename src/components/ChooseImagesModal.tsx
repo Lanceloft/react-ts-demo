@@ -36,7 +36,7 @@ class ChooseImagesModal extends React.Component<
     this.getImagesList();
   }
 
-  public getImagesList = () => {
+  getImagesList = () => {
     http.get("/test/getImagesList").then(data => {
       if (data.status === 0) {
         this.setState({
@@ -46,20 +46,20 @@ class ChooseImagesModal extends React.Component<
     });
   };
 
-  public chooseImage = (item: ChooseImage) => {
+  chooseImage = (item: ChooseImage) => {
     this.setState({
       chooseImageUrl: item.url
     });
   };
 
-  public chooseImagesCancel = () => {
+  chooseImagesCancel = () => {
     this.setState({
       chooseImageUrl: ""
     });
     this.props.chooseImagesCancel();
   };
 
-  public chooseImagesConfirm = () => {
+  chooseImagesConfirm = () => {
     this.setState({
       chooseImageUrl: ""
     });

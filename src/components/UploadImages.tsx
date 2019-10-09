@@ -40,9 +40,9 @@ class UploadImages extends React.Component<IHomePageProps, IHomePageState> {
     };
   }
 
-  public uploadOnChange = (info: any) => {};
+  uploadOnChange = (info: any) => {};
 
-  public beforeUpload = (file: any) => {
+  beforeUpload = (file: any) => {
     const isJPG = file.type === "image/jpeg" || file.type === "image/png";
     if (!isJPG) {
       message.error("You can only upload JPG/PNG file!");

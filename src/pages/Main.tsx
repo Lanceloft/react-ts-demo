@@ -4,6 +4,7 @@ import { Button, Input, Table, Modal, Row, Col } from "antd";
 import { IStoreState, IGlobalStoreState } from "../reducers/types";
 import * as actions from "../actions/index";
 import ChooseImagesModal from "../components/ChooseImagesModal";
+import EditModal from "@/components/EditModal/EditModal";
 
 const confirm = Modal.confirm;
 
@@ -15,13 +16,14 @@ export interface IHomePageState {
   changeName: string;
   imageUrl: string;
   chooseImagesVisible: boolean;
+  editModalVisible: boolean;
 }
 
 export interface IHomePageProps {
   global: IGlobalStoreState;
   addNumber: () => void;
   reduceNumber: () => void;
-  setNumber: (number: Number) => void;
+  addTask: (name:string, url:string) => void;
   getTask: (searchNumber: string) => void;
   deleteItem: (id: number) => void;
   editItem: (id: number, name: string, image: string) => void;
@@ -37,7 +39,8 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
       editId: 0,
       changeName: "",
       imageUrl: "",
-      chooseImagesVisible: false
+      chooseImagesVisible: false,
+      editModalVisible: false,
     };
   }
 
@@ -45,23 +48,19 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     this.props.getTask("");
   }
 
-  public numberOnChange = (e: any) => {
+  numberOnChange = (e: any) => {
     this.setState({
       number: e.target.value
     });
   };
 
-  public searchNameOnChange = (e: any) => {
+  searchNameOnChange = (e: any) => {
     this.setState({
       searchName: e.target.value
     });
   };
 
-  public deleteItem = (id: number) => {
-    this.props.deleteItem(id);
-  };
-
-  public showDeleteConfirm = (id: number) => {
+  showDeleteConfirm = (id: number) => {
     confirm({
       title: "Are you sure delete this task?",
       content: "Some descriptions",
@@ -75,7 +74,7 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     });
   };
 
-  public handleOk = () => {
+  handleOk = () => {
     this.props.editItem(
       this.state.editId,
       this.state.changeName,
@@ -84,14 +83,14 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     this.handleCancel();
   };
 
-  public handleCancel = () => {
+  handleCancel = () => {
     this.setState({
       visible: false,
       changeName: ""
     });
   };
 
-  public showEditModal = (record: any) => {
+  showEditModal = (record: any) => {
     this.setState({
       visible: true,
       editId: record.id,
@@ -100,26 +99,26 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     });
   };
 
-  public changeNameOnChange = (e: any) => {
+  changeNameOnChange = (e: any) => {
     this.setState({
       changeName: e.target.value
     });
   };
 
-  public chooseImagesConfirm = (url: string) => {
+  chooseImagesConfirm = (url: string) => {
     this.props.editItem(this.state.editId, this.state.changeName, url);
     this.setState({
       chooseImagesVisible: false
     });
   };
 
-  public chooseImagesCancel = () => {
+  chooseImagesCancel = () => {
     this.setState({
       chooseImagesVisible: false
     });
   };
 
-  public openUploadModal = (record: any) => {
+  openUploadModal = (record: any) => {
     this.setState({
       editId: record.id,
       changeName: record.task,
@@ -128,9 +127,27 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     });
   };
 
-  public render() {
+  editModalConfirm = (name: string, url: string) => {
+    this.props.addTask(name, url);
+    this.setState({
+      editModalVisible: false
+    })
+  };
+
+  editModalCancel = () => {
+    this.setState({
+      editModalVisible: false
+    })
+  };
+
+  openEditModal = () => {
+    this.setState({
+      editModalVisible: true
+    })
+  };
+
+  render() {
     const { global } = this.props;
-    const { number } = this.state;
 
     const columns = [
       {
@@ -166,7 +183,6 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
     return (
       <div>
         <div>
-          {name}
           {global.amount}
         </div>
         <Button onClick={this.props.addNumber}>add number</Button>
@@ -177,7 +193,7 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
           value={this.state.number}
           onChange={this.numberOnChange}
         />
-        <Button onClick={() => this.props.setNumber(number)}>增加</Button>
+        <Button onClick={() => this.openEditModal()}>增加</Button>
 
         <div>
           <Input
@@ -212,6 +228,12 @@ class HomeComponent extends React.Component<IHomePageProps, IHomePageState> {
           chooseImagesVisible={this.state.chooseImagesVisible}
           chooseImagesConfirm={url => this.chooseImagesConfirm(url)}
           chooseImagesCancel={this.chooseImagesCancel}
+        />
+
+        <EditModal
+          editModalVisible={this.state.editModalVisible}
+          editModalConfirm={(name:string, url:string) => this.editModalConfirm(name, url)}
+          editModalCancel={this.editModalCancel}
         />
       </div>
     );

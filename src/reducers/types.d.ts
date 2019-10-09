@@ -1,5 +1,3 @@
-import { IHomePageStoreState } from "../pages/Home/types";
-
 export interface IAction {
   type: string;
   payload: any;
@@ -15,6 +13,3 @@ export interface IStoreState {
   name: string;
 }
 
-export interface APIAction {
-  type?: any;
-}

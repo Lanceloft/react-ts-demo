@@ -18,10 +18,12 @@ export function reduceNumber(): IAction {
   };
 }
 
-export function setNumber(number: Number): (dispatch: Dispatch) => void {
+export function addTask(name:string,url:string): (dispatch: Dispatch) => void {
   const param = {
-    task: number
+    task: name,
+    image: url
   };
+
   return (dispatch: Dispatch) => {
     http.post("/test", param).then(data => {
       if (data.status === 0) {
