@@ -2,7 +2,7 @@ import axios from "axios";
 import { message } from "antd";
 import { getCookie } from "./cookies";
 
-const baseUrl = "http://127.0.0.1:5000";
+const baseUrl = "http://0.0.0.0:5000";
 
 const http = {
   get(repo, param) {
